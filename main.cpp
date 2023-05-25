@@ -86,6 +86,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 		/// ↓描画処理ここから
 		///
 		
+		Novice::ScreenPrintf(0, 0, "R : reset");
 		//VectorScreenPrintf(0, 0, cross, "Cross");
 		Grid::DrawGrid(originViewProjectionMatrix, viewportMatrix);
 		Sphere::DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, 0x000000FF);
