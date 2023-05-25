@@ -7,7 +7,6 @@
 #include"Grid.h"
 #include"Sphere.h"
 #include<imgui.h>
-#include"MyImGui.h"
 
 const char kWindowTitle[] = "学籍番号";
 
@@ -34,6 +33,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 
 	Sphere sphere = {
 		{},
+		{},
 		1.0f
 	};
 
@@ -56,27 +56,23 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 		if (keys[DIK_R]) {
 			cameraTranslate = { 0.0f,1.9f,-6.49f };
 			cameraRotate = { 0.26f,0.0f,0.0f };
-			sphere = { {},1.0f };
+			sphere = { {},{},1.0f };
 			sphereRotate = {};
 		}
 
 		ImGui::Begin("Window");
-		MyImGui::SliderVector3("CameraTranslate", cameraTranslate,-10.0f,10.0f);
-		MyImGui::SliderVector3("CameraRotate", cameraRotate, -3.141592f, 3.141592f);
-		MyImGui::SliderVector3("SphereCenter", sphere.center_, -10.0f, 10.0f);
-		MyImGui::SliderVector3("SphereRotate", sphereRotate, -3.141592f, 3.141592f);
+		ImGui::SliderFloat3("CameraTranslate", &cameraTranslate.x,-10.0f,10.0f);
+		ImGui::SliderFloat3("CameraRotate", &cameraRotate.x, -3.141f, 3.141f);
+		ImGui::SliderFloat3("SphereCenter", &sphere.center_.x, -10.0f, 10.0f);
+		ImGui::SliderFloat3("SphereRotate", &sphere.rotate_.x, -3.141f, 3.141f);
 		ImGui::SliderFloat("SphereRadius", &sphere.radius_, 0.0f, 2.0f);
 		ImGui::End();
 		
-
-		MyMatrix4x4 worldMatrix = MyMatrix4x4::MakeAffinMatrix({ 1.0f,1.0f,1.0f }, sphereRotate, sphere.center_);
 		MyMatrix4x4 cameraMatrix = MyMatrix4x4::MakeAffinMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraTranslate);
 		MyMatrix4x4 viewMatrix = MyMatrix4x4::Inverse(cameraMatrix);
 		MyMatrix4x4 projectionMatrix = MyMatrix4x4::MakePerspectiveFovMatrix(0.45f, float(kWindowWidth) / float(kWindowHeight), 0.1f, 100.0f);
-		MyMatrix4x4 worldViewProjectionMatrix = MyMatrix4x4::Multiply(worldMatrix, MyMatrix4x4::Multiply(viewMatrix, projectionMatrix));
+		MyMatrix4x4 viewProjectionMatrix = MyMatrix4x4::Multiply(viewMatrix, projectionMatrix);
 		MyMatrix4x4 viewportMatrix = MyMatrix4x4::MakeViewportMatrix(0.0f, 0.0f, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
-
-		MyMatrix4x4 originViewProjectionMatrix = MyMatrix4x4::Multiply(originMatrix, MyMatrix4x4::Multiply(viewMatrix, projectionMatrix));
 
 		///
 		/// ↑更新処理ここまで
@@ -88,8 +84,8 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR lpCmdLine, _In
 		
 		Novice::ScreenPrintf(0, 0, "R : reset");
 		//VectorScreenPrintf(0, 0, cross, "Cross");
-		Grid::DrawGrid(originViewProjectionMatrix, viewportMatrix);
-		Sphere::DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix, 0x000000FF);
+		Grid::DrawGrid(viewProjectionMatrix, viewportMatrix);
+		Sphere::DrawSphere(sphere, viewProjectionMatrix, viewportMatrix, 0x000000FF);
 		////cameraRotateを使っているけど向きのrotateを用意した方がいいかも
 		//if (Calc::Dot(MyMatrix4x4::Multiply(cameraDirection ,MyMatrix4x4::MakeRotateXYZMatrix(cameraRotate)), Calc::Cross((screenVertices[1] - screenVertices[0]), (screenVertices[2] - screenVertices[1]))) <= 0) {
 		//	Novice::DrawTriangle(int(screenVertices[0].x), int(screenVertices[0].y), int(screenVertices[1].x), int(screenVertices[1].y),

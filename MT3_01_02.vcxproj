@@ -112,7 +112,6 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatrixScreenPrintf.cpp" />
-    <ClCompile Include="MyImGui.cpp" />
     <ClCompile Include="MyMatrix3x3.cpp" />
     <ClCompile Include="MyMatrix4x4.cpp" />
     <ClCompile Include="Sphere.cpp" />
@@ -148,7 +147,6 @@
     <ClInclude Include="calc.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="MatrixScreenPrintf.h" />
-    <ClInclude Include="MyImGui.h" />
     <ClInclude Include="MyMatrix3x3.h" />
     <ClInclude Include="MyMatrix4x4.h" />
     <ClInclude Include="MyVector2.h" />

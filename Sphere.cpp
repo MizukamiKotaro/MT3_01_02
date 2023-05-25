@@ -3,7 +3,7 @@
 #define _USE_MATH_DEFINES
 #include<cmath>
 
-Sphere::Sphere(const MyVector3& center, const float& radius) {
+Sphere::Sphere(const MyVector3& center, const MyVector3& rotate, const float& radius) {
 	center_ = center;
 	radius_ = radius;
 }
@@ -12,6 +12,10 @@ void Sphere::DrawSphere(const Sphere& sphere, const MyMatrix4x4& viewProjectionM
 	const uint32_t kSubdivision = 16;
 	const float kLonEvery = static_cast<float> (M_PI / kSubdivision); // 経度分割1つ分の角度
 	const float kLatEvery = static_cast<float> (2.0f * M_PI / kSubdivision); // 井戸分割1つ分の角度
+
+	MyMatrix4x4 worldMatrix = MyMatrix4x4::MakeAffinMatrix({ 1.0f,1.0f,1.0f }, sphere.rotate_, sphere.center_);
+	MyMatrix4x4 worldViewProjectionMatrix = MyMatrix4x4::Multiply(worldMatrix, viewProjectionMatrix);
+
 	//　緯度の方向に分割 -π/2 ～ π/2
 	for (uint32_t latIndex = 0; latIndex < kSubdivision; latIndex++) {
 		float lat = static_cast<float>(- M_PI / 2.0f + kLatEvery * latIndex);
@@ -30,11 +34,11 @@ void Sphere::DrawSphere(const Sphere& sphere, const MyMatrix4x4& viewProjectionM
 			MyVector3 screenAPosition, screenBPosition, screenCPosition;
 			MyVector3 nbcA, nbcB, nbcC;
 
-			nbcA = MyMatrix4x4::Transform(a, viewProjectionMatrix);
+			nbcA = MyMatrix4x4::Transform(a, worldViewProjectionMatrix);
 			screenAPosition = MyMatrix4x4::Transform(nbcA, viewportMatrix);
-			nbcB = MyMatrix4x4::Transform(b, viewProjectionMatrix);
+			nbcB = MyMatrix4x4::Transform(b, worldViewProjectionMatrix);
 			screenBPosition = MyMatrix4x4::Transform(nbcB, viewportMatrix);
-			nbcC = MyMatrix4x4::Transform(c, viewProjectionMatrix);
+			nbcC = MyMatrix4x4::Transform(c, worldViewProjectionMatrix);
 			screenCPosition = MyMatrix4x4::Transform(nbcC, viewportMatrix);
 
 			Novice::DrawLine(static_cast<int>(screenAPosition.x), static_cast<int>(screenAPosition.y), static_cast<int>(screenBPosition.x), static_cast<int>(screenBPosition.y), color);

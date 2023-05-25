@@ -6,6 +6,9 @@ void Grid::DrawGrid(const MyMatrix4x4& viewProjectionMatrix, const MyMatrix4x4& 
 	const uint32_t kSubdivision = 10; // 分割数
 	const float kGridEvery = (kGridHalfWidth * 2.0f) / float(kSubdivision); // 1つ分の長さ
 
+	MyMatrix4x4 worldMatrix = MyMatrix4x4::MakeAffinMatrix({ 1.0f,1.0f,1.0f }, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+	MyMatrix4x4 worldViewProjectionMatrix = MyMatrix4x4::Multiply(worldMatrix, viewProjectionMatrix);
+
 	for (uint32_t index = 0; index <= kSubdivision; index++) {
 
 		MyVector3 xLinePosition[2] = {
@@ -21,8 +24,8 @@ void Grid::DrawGrid(const MyMatrix4x4& viewProjectionMatrix, const MyMatrix4x4& 
 		MyVector3 screenZLinePosition[2] = {};
 
 		for (int i = 0; i < 2; i++) {
-			MyVector3 nbcXLinePosition = MyMatrix4x4::Transform(xLinePosition[i], viewProjectionMatrix);
-			MyVector3 nbcZLinePosition = MyMatrix4x4::Transform(zLinePosition[i], viewProjectionMatrix);
+			MyVector3 nbcXLinePosition = MyMatrix4x4::Transform(xLinePosition[i], worldViewProjectionMatrix);
+			MyVector3 nbcZLinePosition = MyMatrix4x4::Transform(zLinePosition[i], worldViewProjectionMatrix);
 			screenXLinePosition[i] = MyMatrix4x4::Transform(nbcXLinePosition, viewportMatrix);
 			screenZLinePosition[i] = MyMatrix4x4::Transform(nbcZLinePosition, viewportMatrix);
 		}
